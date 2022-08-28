@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
 @import url(reset.css);
 @import url(firstPg.css);
+@import url(messages.css);
 
 *{
     font-family: 'Roboto', sans-serif;
@@ -19,7 +20,7 @@ body{
     position: relative;
     width: auto;
     height: 100vh;
-    display: grid;
+    display: none;
 }
 .appbar, .bottombar{
     position: absolute;
@@ -33,6 +34,7 @@ body{
     height: auto;
     margin-top: 100px;
     margin-bottom: 85px;
+    overflow-y: scroll;
 }
 .appbar{
     top: 0;

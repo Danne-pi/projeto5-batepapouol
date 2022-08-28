@@ -21,19 +21,27 @@ function unloadFirstPage(){
     loginPage.remove()
     const refresh = setInterval(getParticipants, 5000)
     document.querySelector(".app").style.display = "grid"
-}
-// loadFirstPage()
+    loadMessages()
+    const refreshMsg = setInterval(loadMessages, 3000)
 
+}
+loadFirstPage()
+
+//Carregar mensagens
+function loadMessages(){
+    const promisse = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages')
+    promisse.then(printMessages)    
+    promisse.catch(tratarErro)    
+}
 
 //Registrar User
 function registerParticipant(value){
     const dados = {
         name: ""+value
-    };
+    }
     const requestUrl = hasRegistered == true ? 'status' : 'participants' 
-    const requisicao = axios.post('https://mock-api.driven.com.br/api/v6/uol/'+requestUrl, dados);
-    requisicao.then(tratarSucesso);
-    requisicao.catch(tratarErro);
+    const requisicao = axios.post('https://mock-api.driven.com.br/api/v6/uol/'+requestUrl, dados)
+    requisicao.catch(tratarErro)
 }
 
 //Pegar lista de Users Online
@@ -41,6 +49,7 @@ function getParticipants(){
     registerParticipant(thisUser)
     const promisse = axios.get('https://mock-api.driven.com.br/api/v6/uol/participants')
     promisse.then(printParticipants)
+    loadMessages()
 }
 //Imprimir cada User de acordo com a Lista
 function printParticipants(response){
@@ -50,18 +59,31 @@ function printParticipants(response){
     }
 }
 
-function tratarSucesso(resposta) {
-    console.log(resposta.data)
+function printMessages(response) {
+    const messages = document.querySelector(".messages")
+    const data = response.data
+    messages.innerHTML = ""
+    for (let i = 0; i < response.data.length; i++) {
+        const msg = document.createElement("div")
+        msg.id = data[i].type
+        msg.innerHTML = `
+            <span class="time">${data[i].time} </span>
+            <strong>${data[i].from}</strong>
+             para <strong>${data[i].to}: 
+            </strong>${data[i].text}
+        `
+        messages.appendChild(msg)
+    }
  }
 
 function tratarErro(erro) {
-  console.log("Status code: " + erro.response.status); // Ex: 404
-	console.log("Mensagem de erro: " + erro.response.data); // Ex: Not Found
+  console.log("Status code: " + erro.response.status) // Ex: 404
+	console.log("Mensagem de erro: " + erro.response.data) // Ex: Not Found
 }
 
-// const promessa = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages');
-//     promessa.then(processarResposta);
+// const promessa = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages')
+//     promessa.then(processarResposta)
 
 //     function processarResposta(resposta) {
-// 	console.log(resposta.data);
+// 	console.log(resposta.data)
 //     }

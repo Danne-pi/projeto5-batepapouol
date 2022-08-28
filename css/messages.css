@@ -1,0 +1,26 @@
+#message, #private_message, #status{
+    background-color: white;
+    width: 100%;
+    padding-inline: 16px;
+    padding-block: 12px;
+    line-height: 20px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 16px;
+}
+#status{
+    background-color: #DCDCDC;
+}
+#message{
+    background-color: white;
+}
+#private_message{
+    background-color: #FFDEDE;
+}
+
+.time{
+    color: #AAAAAA;
+}
+.messages strong {
+    font-weight: 700;
+}
