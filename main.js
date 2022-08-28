@@ -5,7 +5,7 @@ function loadFirstPage(){
     const loginPage = document.createElement("div")
     loginPage.classList.add("first-page")
     loginPage.innerHTML = `
-    <img src="./assets/logo.jpg" alt="">
+    <img src="./assets/logo.png" alt="">
     <input type="text" name="nome" placeholder="Digite seu nome">
     <button >Entrar</button>
     `
@@ -19,9 +19,10 @@ function unloadFirstPage(){
     registerParticipant(thisUser)
     hasRegistered = true
     loginPage.remove()
-    const retime = setInterval(getParticipants, 5000)
+    const refresh = setInterval(getParticipants, 5000)
+    document.querySelector(".app").style.display = "grid"
 }
-loadFirstPage()
+// loadFirstPage()
 
 
 //Registrar User

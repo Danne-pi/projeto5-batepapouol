@@ -12,3 +12,59 @@
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+body{
+    background-color: #F3F3F3;
+}
+.app{
+    position: relative;
+    width: auto;
+    height: 100vh;
+    display: grid;
+}
+.appbar, .bottombar{
+    position: absolute;
+    height: 80px;
+    width: 100%;
+    background-color: white;
+    left: 0;
+}
+.messages{
+    width: auto;
+    height: auto;
+    margin-top: 100px;
+    margin-bottom: 85px;
+}
+.appbar{
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 22px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05);
+}
+.appbar .logo{
+    height: 53px;
+    width: 75px;
+}
+.bottombar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 22px;
+    bottom: 0;
+    box-shadow: 0px -4px 6px rgba(0, 0, 0, 0.05);
+}
+.bottombar input{
+    height: 60px;
+    width: 100%;
+    border: none;
+    font-weight: 400;
+    font-size: 18px;
+    margin-right: 22px;
+    outline: none;
+}
+.bottombar input::placeholder{
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+}
