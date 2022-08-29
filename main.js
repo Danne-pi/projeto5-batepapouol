@@ -21,20 +21,22 @@ function unloadFirstPage(){
     loginPage.remove()
     const refresh = setInterval(getParticipants, 5000)
     document.querySelector(".app").style.display = "grid"
-    loadMessages()
-    const refreshMsg = setInterval(loadMessages, 3000)
+    getMessages()
+    const refreshMsg = setInterval(getMessages, 3000)
 
 }
 loadFirstPage()
 
 //Carregar mensagens
-function loadMessages(){
+let loadedMessages = {}
+function getMessages(){
     const promisse = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages')
     promisse.then(printMessages)    
-    promisse.catch(tratarErro)    
+    promisse.catch(tratarErro)
+
 }
 
-//Registrar User
+//Registrar User + Manter status online
 function registerParticipant(value){
     const dados = {
         name: ""+value
@@ -49,7 +51,7 @@ function getParticipants(){
     registerParticipant(thisUser)
     const promisse = axios.get('https://mock-api.driven.com.br/api/v6/uol/participants')
     promisse.then(printParticipants)
-    loadMessages()
+    getMessages()
 }
 //Imprimir cada User de acordo com a Lista
 function printParticipants(response){
@@ -59,6 +61,8 @@ function printParticipants(response){
     }
 }
 
+
+//Carregar mensagens na tela
 function printMessages(response) {
     const messages = document.querySelector(".messages")
     const data = response.data
@@ -66,24 +70,51 @@ function printMessages(response) {
     for (let i = 0; i < response.data.length; i++) {
         const msg = document.createElement("div")
         msg.id = data[i].type
-        msg.innerHTML = `
+        msg.innerHTML = data[i].type == "message" ? `
             <span class="time">${data[i].time} </span>
             <strong>${data[i].from}</strong>
              para <strong>${data[i].to}: 
+            </strong>${data[i].text}
+        `:
+        data[i].type == "private_message" ?
+        `
+            <span class="time">${data[i].time} </span>
+            <strong>${data[i].from}</strong>
+             para <strong>${data[i].to}: 
+            </strong>${data[i].text}
+        `:
+        `
+            <span class="time">${data[i].time} </span>
+            <strong>${data[i].from} 
             </strong>${data[i].text}
         `
         messages.appendChild(msg)
     }
  }
 
+ 
+//Selecionar Destinatário
+let receiver = ""
+function selectReceiver(){
+    return 
+}
+
+//Enviar mensagem
+function sendMessage(){
+    const input = document.querySelector(".bottombar input")
+    const dados = {
+        from: thisUser,
+        to: receiver == "" ? "Todos" : receiver,
+        text: input.value,
+        type: receiver == "" ? "message" : "private_message" // ou "private_message" para o bônus
+    }
+    input.value = ""
+    const requisicao = axios.post('https://mock-api.driven.com.br/api/v6/uol/messages', dados)
+    requisicao.catch(tratarErro)
+}
+
+
 function tratarErro(erro) {
   console.log("Status code: " + erro.response.status) // Ex: 404
 	console.log("Mensagem de erro: " + erro.response.data) // Ex: Not Found
 }
-
-// const promessa = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages')
-//     promessa.then(processarResposta)
-
-//     function processarResposta(resposta) {
-// 	console.log(resposta.data)
-//     }

@@ -7,6 +7,10 @@
     font-family: 'Roboto';
     font-weight: 400;
     font-size: 16px;
+    margin-block: 4px;
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 #status{
     background-color: #DCDCDC;
