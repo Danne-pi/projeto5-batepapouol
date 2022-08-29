@@ -46,24 +46,8 @@ function registerParticipant(value){
     requisicao.catch(tratarErro)
 }
 
-//Pegar lista de Users Online
-function getParticipants(){
-    registerParticipant(thisUser)
-    const promisse = axios.get('https://mock-api.driven.com.br/api/v6/uol/participants')
-    promisse.then(printParticipants)
-    getMessages()
-}
-//Imprimir cada User de acordo com a Lista
-function printParticipants(response){
-    console.clear()
-    for (let i = 0; i < response.data.length; i++) {
-        console.log(response.data[i].name)
-    }
-}
-
-
 //Carregar mensagens na tela
-let lockview = false
+let lockview = true
 function printMessages(response) {
     const messages = document.querySelector(".messages")
     const data = response.data
@@ -89,7 +73,7 @@ function printMessages(response) {
             <strong>${data[i].from} 
             </strong>${data[i].text}
         `
-        if (i == data.length-1 && lockview == true){
+        if(i == data.length-1){
             msg.classList.add("lockintoview")
         }
         if(data[i].from == thisUser){
@@ -106,9 +90,22 @@ function printMessages(response) {
         }
 
     }
-    document.querySelector(".lockintoview").scrollIntoView()
+    if (lockview == true){
+        document.querySelector(".lockintoview").scrollIntoView()
+    }
 }
 
+//Controlador scrollIntoView
+function swapLock(){
+    const btn = document.querySelector(".btnlock")
+    lockview = !lockview
+    if(lockview == true){
+        btn.innerHTML = `<ion-icon name="flash-outline"></ion-icon>`
+    }
+    else{
+        btn.innerHTML = `<ion-icon name="flash-off-outline"></ion-icon>`
+    }
+}
  
 //Selecionar Destinatário
 let receiver = ""
@@ -143,8 +140,33 @@ function showMenu(){
     else{
         document.querySelector(".shadow").style.visibility = "hidden"
         document.querySelector(".shadow").style.opacity = 0
-        document.querySelector(".menu").style.right= "-85%"
+        document.querySelector(".menu").style.right= "-70%"
         menuState = !menuState
+    }
+}
+
+//Pegar lista de Users Online
+function getParticipants(){
+    registerParticipant(thisUser)
+    const promisse = axios.get('https://mock-api.driven.com.br/api/v6/uol/participants')
+    promisse.then(printParticipants)
+    getMessages()
+}
+//Printar Users Online
+function printParticipants(response){
+    const userList = document.querySelector(".menu .list .users")
+    userList.innerHTML = ""
+    for (let i = 0; i < response.data.length; i++) {
+        let create = document.createElement("span")
+        create.classList.add("new")
+        create.innerHTML = `
+            <div class="wrapper">
+                <ion-icon name="person"></ion-icon>
+                <div class="txt-overflow"><h2>${response.data[i].name}</h2></div>
+            </div>
+            <ion-icon class="check" name="checkmark-sharp"></ion-icon>
+        `
+        userList.appendChild(create)
     }
 }
 
