@@ -223,5 +223,6 @@ function selectUser(){
 
 function tratarErro(erro) {
   console.log("Status code: " + erro.response.status) // Ex: 404
-	console.log("Mensagem de erro: " + erro.response.data) // Ex: Not Found
+    alert("você foi desconectado, algo inesperado aconteceu nos servidores/sua internet")
+	window.location.reload() // Ex: Not Found
 }
