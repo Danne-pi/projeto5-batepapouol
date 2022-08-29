@@ -22,7 +22,7 @@ function unloadFirstPage(){
     const refresh = setInterval(getParticipants, 5000)
     document.querySelector(".app").style.display = "grid"
     getMessages()
-    const refreshMsg = setInterval(getMessages, 3000)
+    const refreshMsg = setInterval(getMessages, 10000)
 
 }
 loadFirstPage()
@@ -63,11 +63,12 @@ function printParticipants(response){
 
 
 //Carregar mensagens na tela
+let lockview = false
 function printMessages(response) {
     const messages = document.querySelector(".messages")
     const data = response.data
     messages.innerHTML = ""
-    for (let i = 0; i < response.data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         const msg = document.createElement("div")
         msg.id = data[i].type
         msg.innerHTML = data[i].type == "message" ? `
@@ -88,9 +89,25 @@ function printMessages(response) {
             <strong>${data[i].from} 
             </strong>${data[i].text}
         `
-        messages.appendChild(msg)
+        if (i == data.length-1 && lockview == true){
+            msg.classList.add("lockintoview")
+        }
+        if(data[i].from == thisUser){
+            messages.appendChild(msg)
+        }
+        else{
+            if(data[i].type == "private_message" && data[i].to == thisUser){
+                messages.appendChild(msg)
+            }
+            if(data[i].type == "message" || 
+            data[i].type == "status"){
+                messages.appendChild(msg)
+            }
+        }
+
     }
- }
+    document.querySelector(".lockintoview").scrollIntoView()
+}
 
  
 //Selecionar Destinatário
@@ -111,8 +128,25 @@ function sendMessage(){
     input.value = ""
     const requisicao = axios.post('https://mock-api.driven.com.br/api/v6/uol/messages', dados)
     requisicao.catch(tratarErro)
+    getMessages()
 }
-
+//Mostrar Menu
+let menuState = false
+document.querySelector(".menu-btn").addEventListener("click", showMenu)
+function showMenu(){
+    if(menuState == false){
+        document.querySelector(".shadow").style.visibility = "visible"
+        document.querySelector(".shadow").style.opacity = 1
+        document.querySelector(".menu").style.right=0
+        menuState = !menuState
+    }
+    else{
+        document.querySelector(".shadow").style.visibility = "hidden"
+        document.querySelector(".shadow").style.opacity = 0
+        document.querySelector(".menu").style.right= "-85%"
+        menuState = !menuState
+    }
+}
 
 function tratarErro(erro) {
   console.log("Status code: " + erro.response.status) // Ex: 404

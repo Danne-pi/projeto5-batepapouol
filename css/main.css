@@ -2,6 +2,7 @@
 @import url(reset.css);
 @import url(firstPg.css);
 @import url(messages.css);
+@import url(menu.css);
 
 *{
     font-family: 'Roboto', sans-serif;
@@ -21,6 +22,7 @@ body{
     width: auto;
     height: 100vh;
     display: none;
+    overflow: hidden;
 }
 .appbar, .bottombar{
     position: absolute;
