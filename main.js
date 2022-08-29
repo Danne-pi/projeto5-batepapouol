@@ -6,26 +6,63 @@ function loadFirstPage(){
     loginPage.classList.add("first-page")
     loginPage.innerHTML = `
     <img src="./assets/logo.png" alt="">
-    <input type="text" name="nome" placeholder="Digite seu nome">
+    <input class="this-input" type="text" name="nome" placeholder="Digite seu nome">
     <button >Entrar</button>
     `
     document.body.appendChild(loginPage)
-    loginPage.querySelector("button").addEventListener("click", unloadFirstPage)
+    loginPage.querySelector("button").addEventListener("click", tryLogin)
 }
-function unloadFirstPage(){
+loadFirstPage()
+
+
+function tryLogin(){
     const loginPage = document.querySelector(".first-page")
     const value = loginPage.querySelector("input").value
     thisUser = value
-    registerParticipant(thisUser)
-    hasRegistered = true
-    loginPage.remove()
-    const refresh = setInterval(getParticipants, 5000)
-    document.querySelector(".app").style.display = "grid"
-    getMessages()
-    const refreshMsg = setInterval(getMessages, 10000)
+    registerParticipant()
+    loadingIndication()
 
 }
-loadFirstPage()
+function loadingIndication(){
+    document.querySelector(".this-input").remove()
+    document.querySelector("button").remove()
+    const create = document.createElement("img")
+    create.classList.add("myloading")
+    create.setAttribute("src", "./assets/loading.gif")
+    document.querySelector(".first-page").appendChild(create)
+}
+//Tentar Registrar User
+function registerParticipant(){
+    const dados = {
+        name: thisUser
+    }
+    const requisicao = axios.post('https://mock-api.driven.com.br/api/v6/uol/participants', dados)
+    requisicao.then(registerSuccess)
+    requisicao.catch(loginErro)
+}
+//Manter status online
+function iAmOnline(){
+    const dados = {
+        name: thisUser
+    }
+    const requisicao = axios.post('https://mock-api.driven.com.br/api/v6/uol/status', dados)
+    requisicao.catch(tratarErro)
+}
+
+function loginErro(erro) {
+    if(erro.response.status == 400){
+        alert("Já existe um user com o mesmo nome, tente outro.")
+        window.location.reload()
+    }
+}
+function registerSuccess(){
+    hasRegistered = true
+    document.querySelector(".first-page").remove()
+    const refresh = setInterval(getParticipants, 10000)
+    document.querySelector(".app").style.display = "grid"
+    getMessages()
+    const refreshMsg = setInterval(getMessages, 5000)
+}
 
 //Carregar mensagens
 let loadedMessages = {}
@@ -34,16 +71,6 @@ function getMessages(){
     promisse.then(printMessages)    
     promisse.catch(tratarErro)
 
-}
-
-//Registrar User + Manter status online
-function registerParticipant(value){
-    const dados = {
-        name: ""+value
-    }
-    const requestUrl = hasRegistered == true ? 'status' : 'participants' 
-    const requisicao = axios.post('https://mock-api.driven.com.br/api/v6/uol/'+requestUrl, dados)
-    requisicao.catch(tratarErro)
 }
 
 //Carregar mensagens na tela
@@ -147,27 +174,51 @@ function showMenu(){
 
 //Pegar lista de Users Online
 function getParticipants(){
-    registerParticipant(thisUser)
+    iAmOnline()
     const promisse = axios.get('https://mock-api.driven.com.br/api/v6/uol/participants')
     promisse.then(printParticipants)
     getMessages()
 }
 //Printar Users Online
 function printParticipants(response){
-    const userList = document.querySelector(".menu .list .users")
+    const userList = document.querySelector(".menu .list")
     userList.innerHTML = ""
+    const printTodos = document.createElement("span")
+    printTodos.innerHTML=`
+    <div class="wrapper">
+        <img class="all" src="./assets/menu.png" alt="">
+        <h2>Todos</h2>
+    </div>
+    <ion-icon name="checkmark-sharp"></ion-icon>
+    `
+    printTodos.addEventListener("click", selectUser)
+    userList.appendChild(printTodos)
+
     for (let i = 0; i < response.data.length; i++) {
-        let create = document.createElement("span")
+        const create = document.createElement("span")
         create.classList.add("new")
         create.innerHTML = `
             <div class="wrapper">
-                <ion-icon name="person"></ion-icon>
+                <img src="./assets/user.png">
                 <div class="txt-overflow"><h2>${response.data[i].name}</h2></div>
             </div>
             <ion-icon class="check" name="checkmark-sharp"></ion-icon>
         `
+        create.addEventListener("click", selectUser)
         userList.appendChild(create)
     }
+}
+
+function selectUser(){
+    const userList = document.querySelectorAll(".menu .list span")
+    for (let i = 0; i < userList.length; i++) {
+        userList[i].querySelector("ion-icon").style.visibility = "hidden"
+        if(userList[i].classList.contains("outlined")){
+            userList[i].classList.remove("outlined")
+        }
+    }
+    this.querySelector("ion-icon").style.visibility = "visible"
+    this.classList.add("outlined")
 }
 
 function tratarErro(erro) {
